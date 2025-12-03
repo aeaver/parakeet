@@ -83,17 +83,18 @@ def main():
 
     download_url = manifest["download_url"]
 
+    destination_filename = "manifesta.json"
 
-    # true_mod_folder_path = true_mod_folder / destination_filename
+    true_mod_folder_path = true_mod_folder / destination_filename
 
-    # mod_manifest = requests.get(url)
+    mod_manifest = requests.get(download_url)
 
-    # if mod_manifest.status_code == 200:
-    #     with open(true_mod_folder_path, "wb") as f:
-    #         f.write(mod_manifest.content)
-    #     print("Download completed")
-    # else:
-    #     print(f"Download failed. Status code : {mod_manifest.status_code}")
+    if mod_manifest.status_code == 200:
+        with open(true_mod_folder_path, "wb") as f:
+            f.write(mod_manifest.content)
+        print("Download completed")
+    else:
+        print(f"Download failed. Status code : {mod_manifest.status_code}")
 
 
 
