@@ -54,7 +54,8 @@ def main():
     for launcher,paths in available_path:
         print(f"[{counter}]. {launcher} : {paths}")
         counter+=1
-
+    
+    
     chosenPathLauncher = int(input("Select Your launcher: "))
     selected_choice = available_path[chosenPathLauncher - 1]
     launcher_choice_path = selected_choice[1]
@@ -101,7 +102,8 @@ def main():
         "Camerature-*.jar",
         "ketkets-furniture-*.jar"
         "mcw-furniture-*.jar",
-        "voicechat-fabric-*.jar"
+        "voicechat-fabric-*.jar",
+        "fabric-api-*.jar"
     }
 
     jarfile = find_jar(true_mod_folder)
