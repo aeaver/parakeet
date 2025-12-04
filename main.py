@@ -38,9 +38,7 @@ def find_mod(mod_path):
                 yield mod_folder
 
 def find_jar(true_mod_folder):
-    for jar in true_mod_folder.iterdir():
-        if jar.is_file() and jar.suffix == ".jar":
-            print(jar.name)
+    ...
 
 
 def main():
@@ -54,9 +52,15 @@ def main():
     for launcher,paths in available_path:
         print(f"[{counter}]. {launcher} : {paths}")
         counter+=1
-    
-    
-    chosenPathLauncher = int(input("Select Your launcher: "))
+
+    while True:
+        try:
+            chosenPathLauncher = int(input("Select Your launcher: "))
+        except ValueError:
+            print("Numbers only")
+        else:
+            break
+
     selected_choice = available_path[chosenPathLauncher - 1]
     launcher_choice_path = selected_choice[1]
 
@@ -71,7 +75,14 @@ def main():
         print(f"[{counter}]. {paths}")
         counter+=1
 
-    Chosen_Mod_Folder = int(input("Pick Your instance: "))
+    while True:
+        try:
+            Chosen_Mod_Folder = int(input("Pick Your instance: "))
+        except ValueError:
+            print("Numbers only")
+        else:
+            break
+
     Choosed_Mod_Folder = ver_folder_path[Chosen_Mod_Folder-1]
     mod_path = Choosed_Mod_Folder
 
@@ -97,14 +108,6 @@ def main():
         print("Download completed")
     else:
         print(f"Download failed. Status code : {mod_manifest.status_code}")
-
-    target_mod = {
-        "Camerature-*.jar",
-        "ketkets-furniture-*.jar"
-        "mcw-furniture-*.jar",
-        "voicechat-fabric-*.jar",
-        "fabric-api-*.jar"
-    }
 
     jarfile = find_jar(true_mod_folder)
 
