@@ -83,7 +83,7 @@ def main():
 
     download_url = manifest["download_url"]
 
-    destination_filename = "manifesta.json"
+    destination_filename = "manifest.json"
 
     true_mod_folder_path = true_mod_folder / destination_filename
 
@@ -95,8 +95,8 @@ def main():
         print("Download completed")
     else:
         print(f"Download failed. Status code : {mod_manifest.status_code}")
-
-
+         
+    
 
 if __name__ == "__main__":
     main()
