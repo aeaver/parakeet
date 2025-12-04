@@ -1,4 +1,4 @@
-import zipfile, requests, json
+import zipfile, requests, json, shutil
 from pathlib import Path
 
 def find_path():
@@ -36,6 +36,12 @@ def find_mod(mod_path):
 
             if mod_folder.exists():
                 yield mod_folder
+
+def find_jar(true_mod_folder):
+    for jar in true_mod_folder.iterdir():
+        if jar.is_file() and jar.suffix == ".jar":
+            print(jar.name)
+
 
 def main():
     #get Launcher
@@ -78,15 +84,10 @@ def main():
     url = "https://raw.githubusercontent.com/aeaver/parakeet/refs/heads/main/manifest.json"
 
     json_request = requests.get(url)
-
     manifest = json_request.json()
-
     download_url = manifest["download_url"]
-
-    destination_filename = "manifest.json"
-
+    destination_filename = "mods.zip"
     true_mod_folder_path = true_mod_folder / destination_filename
-
     mod_manifest = requests.get(download_url)
 
     if mod_manifest.status_code == 200:
@@ -95,8 +96,16 @@ def main():
         print("Download completed")
     else:
         print(f"Download failed. Status code : {mod_manifest.status_code}")
-         
-    
+
+    target_mod = {
+        "Camerature-*.jar",
+        "ketkets-furniture-*.jar"
+        "mcw-furniture-*.jar",
+        "voicechat-fabric-*.jar"
+    }
+
+    jarfile = find_jar(true_mod_folder)
+
 
 if __name__ == "__main__":
     main()
