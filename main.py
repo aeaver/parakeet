@@ -37,8 +37,30 @@ def find_mod(mod_path):
             if mod_folder.exists():
                 yield mod_folder
 
-def find_jar(true_mod_folder):
-    ...
+def find_jar(true_mod_folder, mod_list_manifest):
+
+    for mods in mod_list_manifest:
+        for jars in true_mod_folder.glob(mods):
+            yield jars
+
+def delete_old_jar(jarfile):
+    try:
+        for jar in jarfile:
+            jar.unlink()
+            print(f"deleted {jar} from dir")
+    except FileNotFoundError:
+        for jar in jarfile:
+            print(f"{jar} not found")
+
+def find_zip(true_mod_folder):
+
+    filepath = true_mod_folder.rglob("*.zip")
+    try:
+        for zip in filepath:
+            print(zip)
+            return zip
+    except FileNotFoundError:
+        print("no zip fouind")
 
 
 def main():
@@ -97,6 +119,7 @@ def main():
 
     json_request = requests.get(url)
     manifest = json_request.json()
+    mod_list_manifest = manifest["target_mod"]
     download_url = manifest["download_url"]
     destination_filename = "mods.zip"
     true_mod_folder_path = true_mod_folder / destination_filename
@@ -109,7 +132,24 @@ def main():
     else:
         print(f"Download failed. Status code : {mod_manifest.status_code}")
 
-    jarfile = find_jar(true_mod_folder)
+    jarfile = find_jar(true_mod_folder, mod_list_manifest)
+
+    delete_old_jar(jarfile)
+
+    zip_path = find_zip(true_mod_folder)
+
+    try:
+        with zipfile.ZipFile(zip_path, 'r') as my_zip:
+            my_zip.extractall(true_mod_folder)
+        print("Files extracted sakseufllly")
+    except FileNotFoundError:
+        print("archive not found")
+
+    try:
+        zip_path.unlink()
+        print("Deleting leftover file for cleanup")
+    except FileNotFoundError:
+        print("Mods.zip not found")
 
 
 if __name__ == "__main__":
