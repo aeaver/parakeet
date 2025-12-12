@@ -1,0 +1,12 @@
+{
+    "version": "0.1",
+    "download_url": "https://pixeldrain.com/api/file/7Wuikg3X",
+    "last_updated": "4/12/2025",
+    "target_mod": [
+        "Camerapture-*.jar",
+        "ketkets-furnicraft-*.jar",
+        "mcw-furniture-*.jar",
+        "voicechat-fabric-*.jar",
+        "fabric-api-*.jar"
+    ]
+}
