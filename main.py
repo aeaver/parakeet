@@ -73,13 +73,16 @@ def update_instance_mod(mod_folder_path, manifest, session):
     try:
         download_location.unlink()
         print("Deleting leftover file for cleanup")
-        print("Update Completed")
     except FileNotFoundError:
         print("Mods.zip not found")
 
 def main():
     #get Launcher
     available_path = list(find_path())
+    
+    print("Welcome to parakeet, before we proceed please make sure to make a minecraft instance in your launcher")
+    print("Pick the number based on your minecraft launcher and your minecraft instance name")
+    print("This program will automatically install the required mod to join the server\n")
 
     if not available_path:
         print("No Path to minecraft instance has been found")
@@ -91,12 +94,12 @@ def main():
 
     while True:
         try:
-            chosenPathLauncher = int(input("Select Your launcher: "))
+            chosenPathLauncher = int(input("\nSelect Your launcher (Enter number based on the list above and press enter to submit): \n"))
             if 1 <= chosenPathLauncher <= len(available_path):
                 break
             print(f"Please enter number between 1 and {len(available_path)}")
         except ValueError:
-            print("Numbers only")
+            print("Bodoh ke? Numbers only")
 
 
     selected_choice = available_path[chosenPathLauncher - 1]
@@ -115,12 +118,12 @@ def main():
 
     while True:
         try:
-            Chosen_Mod_Folder = int(input("Pick Your instance: "))
+            Chosen_Mod_Folder = int(input("\nPick Your minecraft instance (Enter number based on the list):"))
             if 1 <= Chosen_Mod_Folder <= len(ver_folder_path):
                 break
             print(f"Please enter number between 1 and {len(ver_folder_path)}")
         except ValueError:
-            print("Numbers only")
+            print("Are you fucking stupid??? Numbers only")
 
     Choosed_Mod_Folder = ver_folder_path[Chosen_Mod_Folder-1]
     mod_path = Choosed_Mod_Folder
