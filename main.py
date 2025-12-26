@@ -2,42 +2,41 @@ import zipfile, requests
 from pathlib import Path
 
 def find_path():
-    homepath = Path(r"C:\Users")
+    homepath = Path.home()
+    location = {        
+        "PrimsLauncher": homepath / "AppData"/"Roaming"/"PrismLauncher"/"instances",
+        "CurseForge": homepath / "curseforge"/ "minecraft" / "Instances"
+    }
 
-    for path in homepath.iterdir():
-        if path.is_dir():
-
-            prismpath = path / "AppData"/"Roaming"/"PrismLauncher"/"instances"
-            cursepath = path / "curseforge"/ "minecraft" / "Instances"
-
-            if prismpath.exists():
-                yield ("PrismLauncher",prismpath)
-            if cursepath.exists():
-                yield ("CurseForge",cursepath)
+    for name,path in location.items():
+        if path.exists():
+            yield (name,path)
 
 def find_ver(launcher_choice_path):
-    homepath = launcher_choice_path
+    
+    label, paths = launcher_choice_path
 
-    for path in homepath.iterdir():
+    for path in paths.iterdir():
         if path.is_dir():
-            yield path
+            yield label, path
 
 def find_mod(mod_path):
-
-    prism = mod_path/ "minecraft" / "mods"
-    if prism.exists():
-        return prism
-
-    curse = mod_path / "mods"
-    if curse.exists():
-        return curse
-
-    if (mod_path/ "minecraft").exists():
-        prism.mkdir(parents=True)
-        return prism
+    
+    label , path = mod_path
+    
+    if label == "PrimsLauncher":
+        target_dir = path / "minecraft" / "mods"
+    elif label =="CurseForge":
+        target_dir = path / "mods"
     else:
-        curse.mkdir(parents=True)
-        return curse
+        return None
+        
+    if not target_dir.exists():
+        target_dir.mkdir(exist_ok=True,parents=True)
+        print(f"Created : {target_dir}")
+        
+    return target_dir
+
 
 def update_instance_mod(mod_folder_path, manifest, session):
 
@@ -103,17 +102,16 @@ def main():
 
 
     selected_choice = available_path[chosenPathLauncher - 1]
-    launcher_choice_path = selected_choice[1]
 
     #Get Version
-    ver_folder_path = list(find_ver(launcher_choice_path))
+    ver_folder_path = list(find_ver(selected_choice))
 
     if not ver_folder_path:
         print("No Instances exists")
 
     counter = 1
-    for paths in ver_folder_path:
-        print(f"[{counter}]. {paths}")
+    for label, path in ver_folder_path:
+        print(f"[{counter}]. {path}")
         counter+=1
 
     while True:
@@ -126,9 +124,8 @@ def main():
             print("Are you fucking stupid??? Numbers only")
 
     Choosed_Mod_Folder = ver_folder_path[Chosen_Mod_Folder-1]
-    mod_path = Choosed_Mod_Folder
 
-    mod_folder_path = find_mod(mod_path)
+    mod_folder_path = find_mod(Choosed_Mod_Folder)
 
     url = "https://raw.githubusercontent.com/aeaver/parakeet/refs/heads/main/manifest.json"
 
