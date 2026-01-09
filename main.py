@@ -130,6 +130,8 @@ class ParakeetUI:
         
         self.log("Parakeet Launcher initialized")
         self.log("Ready to launch...")
+        self.log("Please select your launcher & instance")
+        self.log("Select from dropbox above")
 
         self.output_text.config(state=tk.DISABLED)
         
@@ -195,8 +197,11 @@ class ParakeetUI:
             return None
             
         if not target_dir.exists():
-            target_dir.mkdir(exist_ok=True,parents=True)
-            print(f"Created : {target_dir}")
+            if target_dir == path/".minecraft":
+                target_dir = path / ".minecraft" / "mods"
+            else:
+                target_dir.mkdir(exist_ok=True,parents=True)
+                print(f"Created : {target_dir}")
         
         self.mod_folder = target_dir
         return target_dir
