@@ -8,8 +8,7 @@ wheels/
 *.egg-info
 main.spec
 parakeet.ico
-tkinterTest.py
-zen_NirJrSRhWP.png
+main_cli.py
 
 # Virtual environments
 .venv
