@@ -9,6 +9,7 @@ wheels/
 main.spec
 parakeet.ico
 main_cli.py
+Parakeet.spec
 
 # Virtual environments
 .venv
