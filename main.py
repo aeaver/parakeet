@@ -189,19 +189,26 @@ class ParakeetUI:
         path = self.instance_map[selected_name]
         label, _ = self.selected_launcher_path  # ty:ignore[not-iterable]
         
+        for paths in path.iterdir():
+            if paths.is_dir():
+                self.log({paths})
+                
+        dot_minecraft = paths / ".minecraft"
+        
         if label == "PrismLauncher":
-            target_dir = path / "minecraft" / "mods"
+            dot_minecraft = paths / ".minecraft"
+            if dot_minecraft.exists() and dot_minecraft.is_dir():
+                target_dir = dot_minecraft / "mods"
+            else:
+                target_dir = path / "minecraft" / "mods"
         elif label =="CurseForge":
             target_dir = path / "mods"
         else:
             return None
             
         if not target_dir.exists():
-            if target_dir == path/".minecraft":
-                target_dir = path / ".minecraft" / "mods"
-            else:
-                target_dir.mkdir(exist_ok=True,parents=True)
-                print(f"Created : {target_dir}")
+            target_dir.mkdir(exist_ok=True,parents=True)
+            print(f"Created : {target_dir}")
         
         self.mod_folder = target_dir
         return target_dir
@@ -223,7 +230,7 @@ class ParakeetUI:
                 file_download_url = manifest["download_url"]
                 
                 destination_filename = "mods.zip"
-                download_location = self.mod_folder / destination_filename #ty:ignore
+                download_location = self.mod_folder / destination_filename
                 
                 self.log(f"Downloading mods...")
                 self.root.update()
@@ -249,7 +256,7 @@ class ParakeetUI:
 
     
             for pattern in mod_list:
-                for old_mod in self.mod_folder.glob(pattern): #ty:ignore
+                for old_mod in self.mod_folder.glob(pattern):
                     try:
                         old_mod.unlink()
                         self.log(f"removed {old_mod}")
