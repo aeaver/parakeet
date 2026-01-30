@@ -1,12 +1,25 @@
 {
-    "version": "0.1",
-    "download_url": "https://pixeldrain.com/api/file/7Wuikg3X",
-    "last_updated": "4/12/2025",
-    "target_mod": [
-        "Camerapture-*.jar",
-        "ketkets-furnicraft-*.jar",
-        "mcw-furniture-*.jar",
-        "voicechat-fabric-*.jar",
-        "fabric-api-*.jar"
-    ]
+  "version": "1.2",
+  "download_url": "https://pixeldrain.com/api/file/7Wuikg3X",
+  "last_updated": "4/12/2025",
+  "target_mod": [
+    "Camerapture-*.jar",
+    "ketkets-furnicraft-*.jar",
+    "mcw-furniture-*.jar",
+    "voicechat-fabric-*.jar",
+    "fabric-api-*.jar",
+    "dreamdisplays-fabric-*.jar",
+    "entityculling-fabric-*.jar",
+    "fabric-language-kotlin-*.jar",
+    "ferritecore-*.jar",
+    "ForgeConfigAPIPort-*.jar",
+    "krypton-*.jar",
+    "lithium-fabric-*.jar",
+    "nhatjs_furniture_fabric+*.jar",
+    "NoChatReports-*.jar",
+    "PuzzlesLib-*.jar",
+    "ridetogether-fabric-*.jar",
+    "ScalableLux-*.jar",
+    "fusion-*.jar"
+  ]
 }
