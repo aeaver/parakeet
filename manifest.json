@@ -28,7 +28,6 @@
     "sodium-extra-fabric-*.jar",
     "sodium-fabric-*.jar",
     "beautify-*.jar",
-    "MagnumTorch-*.jar",
-    ""
+    "MagnumTorch-*.jar"
   ]
 }
