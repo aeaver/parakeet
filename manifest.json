@@ -20,6 +20,14 @@
     "PuzzlesLib-*.jar",
     "ridetogether-fabric-*.jar",
     "ScalableLux-*.jar",
-    "fusion-*.jar"
+    "fusion-*.jar",
+    "iris-fabric-*.jar",
+    "entity_model_features_*.jar",
+    "entity_texture_features_*.jar",
+    "reeses-sodium-options-fabric-*.jar",
+    "sodium-extra-fabric-*.jar",
+    "sodium-fabric-*.jar",
+    "beautify-*.jar",
+    "MagnumTorch-*.jar"
   ]
 }
