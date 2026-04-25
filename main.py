@@ -2,7 +2,7 @@ from tkinter import ttk
 import tkinter as tk
 from tkinter import messagebox
 from pathlib import Path
-import requests, zipfile
+import httpx, zipfile
 from typing import Optional
 
 class ParakeetUI:
@@ -157,10 +157,8 @@ class ParakeetUI:
         for name,path in self.launcher_path:
             if name == selected_launcher_name:
                 self.selected_launcher_path = (name,path)
-                self.log(f"{name} and {path}")
                 break
         else:
-            self.log("bzamsdas")
             return
 
         self.instance_path = list(self.find_instance(self.selected_launcher_path))
@@ -190,7 +188,7 @@ class ParakeetUI:
 
         for paths in path.iterdir():
             if paths.is_dir():
-                self.log({paths})
+                pass
 
         dot_minecraft = paths / ".minecraft"
 
@@ -218,9 +216,12 @@ class ParakeetUI:
             return
 
         url = "https://raw.githubusercontent.com/aeaver/parakeet/refs/heads/main/manifest.json"
+        headers = {'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) Parakeet/1.0'}
+        
+        self.update_button.config(state=tk.DISABLED, text="Updating...")
 
         try:
-            with requests.Session() as session:
+            with httpx.Client(headers=headers,timeout=15,follow_redirects=True) as session:
                 json_request = session.get(url)
                 json_request.raise_for_status()
                 manifest = json_request.json()
@@ -233,25 +234,26 @@ class ParakeetUI:
 
                 self.log(f"Downloading mods...")
                 self.root.update()
-
-                get_download = session.get(file_download_url, stream=True)
-
-                total_size = int(get_download.headers.get('content-length', 0))
-                downloaded = 0
-
-                if get_download.status_code == 200:
-                    with open(download_location, "wb") as f:
-                        for chunk in get_download.iter_content(chunk_size=8192):
-                            if chunk:
-                                f.write(chunk)
-                                downloaded += len(chunk)
-                                if downloaded % (1024 * 1024) < 8192:
-                                    mb_downloaded = downloaded / (1024 * 1024)
-                                    self.log(f"Downloaded: {mb_downloaded:.1f} MB")
-                                    self.root.update()
-                        self.log("Download completed")
-                else:
-                    self.log(f"Download failed. Status code : {get_download.status_code}")
+                
+                
+                ##get_download = session.get(file_download_url, stream=True)
+                with session.stream("GET",file_download_url) as get_download:
+                    total_size = int(get_download.headers.get('content-length', 0))
+                    downloaded = 0
+    
+                    if get_download.status_code == 200:
+                        with open(download_location, "wb") as f:
+                            for chunk in get_download.iter_bytes(chunk_size=8192):
+                                if chunk:
+                                    f.write(chunk)
+                                    downloaded += len(chunk)
+                                    if downloaded % (1024 * 1024) < 8192:
+                                        mb_downloaded = downloaded / (1024 * 1024)
+                                        self.log(f"Downloaded: {mb_downloaded:.1f} MB")
+                                        self.root.update()
+                            self.log("Download completed")
+                    else:
+                        self.log(f"Download failed. Status code : {get_download.status_code}")
 
 
             for pattern in mod_list:
@@ -273,12 +275,14 @@ class ParakeetUI:
             self.log("Downloaded file is not a valid zip archive")
         except FileNotFoundError:
             self.log("Mod folder not found")
-        except requests.RequestException as e:
+        except httpx.HTTPError as e:
             self.log(f"Failed to get manifest: {e}")
         except Exception as e:
             self.log(f"Unexpected error: {e}")
 
         self.log("Update completed, Close the damn thing now")
+        
+        self.update_button.config(text="Update",state=tk.NORMAL)
 
 
     def run(self):
