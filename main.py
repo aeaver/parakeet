@@ -20,6 +20,8 @@ class ParakeetUI:
         self.fg_color = "#FFFFFF"
         self.accent_color = "#4CAF50"
 
+        self.server_mod = {"aeaver":"https://raw.githubusercontent.com/aeaver/parakeet/refs/heads/main/aeaver.json",
+                        "krabu":"https://raw.githubusercontent.com/aeaver/parakeet/refs/heads/main/krabu.json"}
         self.launcher_path = list(self.find_path())
         self.launcher_names = [name for name, path in self.launcher_path]
 
@@ -40,11 +42,12 @@ class ParakeetUI:
 
         self.toplabel = tk.Label(
             self.topframe,
-            text="Launcher:",
+            text="Parakeet",
+            justify="right",
             bg=self.bg_darker,
             fg=self.fg_color,
-            font=("Arial", 10, "bold"),
-            anchor="w",
+            font=("Consolas", 15, "bold"),
+            anchor="center",
             padx=5
         )
 
@@ -54,8 +57,25 @@ class ParakeetUI:
         self.launcherframe.grid(row=1,column=0,sticky="ew",columnspan=2,padx=10)
         self.launcherframe.columnconfigure(1, weight=1)
 
-        tk.Label(self.launcherframe,text="Launcher :", bg=self.bg_dark, fg=self.fg_color).grid(
+        # SERVER SELECTOR
+
+        tk.Label(self.launcherframe,text="Server   :", bg=self.bg_dark, fg=self.fg_color, font=("Consolas",10)).grid(
             row=0,column=0,sticky="w",padx=5,pady=5)
+
+        self.server_combo = ttk.Combobox(
+            self.launcherframe,
+            values=list(self.server_mod),
+            state="readonly",
+            width=15
+        )
+        self.server_combo.grid(row=0,column=1,sticky="ew",padx=5,pady=5)
+
+        self.server_combo.bind("<<ComboboxSelected>>", self.on_select_launcher)
+
+        # LAUNCHER SELECTOR
+
+        tk.Label(self.launcherframe,text="Launcher :", bg=self.bg_dark, fg=self.fg_color, font=("Consolas",10)).grid(
+            row=1,column=0,sticky="w",padx=5,pady=5)
 
         self.launcher_combo = ttk.Combobox(
             self.launcherframe,
@@ -63,19 +83,21 @@ class ParakeetUI:
             state="readonly",
             width=15
         )
-        self.launcher_combo.grid(row=0,column=1,sticky="ew",padx=5,pady=5)
+        self.launcher_combo.grid(row=1,column=1,sticky="ew",padx=5,pady=5)
 
         self.launcher_combo.bind("<<ComboboxSelected>>", self.on_select_launcher)
 
-        tk.Label(self.launcherframe,text="Instance :", bg=self.bg_dark, fg=self.fg_color).grid(
-            row=1,column=0,sticky="w",padx=5,pady=5)
+        # INSTANCE SELECTOR
+
+        tk.Label(self.launcherframe,text="Instance :", bg=self.bg_dark, fg=self.fg_color,font=("Consolas",10) ).grid(
+            row=2,column=0,sticky="w",padx=5,pady=5)
 
         self.instance_combo = ttk.Combobox(
             self.launcherframe,
             state="readonly",
             width=15
         )
-        self.instance_combo.grid(row=1,column=1,sticky="ew",padx=5,pady=5)
+        self.instance_combo.grid(row=2,column=1,sticky="ew",padx=5,pady=5)
         self.instance_combo.bind("<<ComboboxSelected>>", self.find_mod)
 
         self.update_button = tk.Button(
@@ -83,7 +105,7 @@ class ParakeetUI:
             text="Update",
             bg=self.accent_color,
             fg="white",
-            font=("Arial", 11, "bold"),
+            font=("Consolas", 11, "bold"),
             command=self.update_instance_mod,
             cursor="hand2",
             relief=tk.FLAT,
@@ -102,7 +124,7 @@ class ParakeetUI:
             text="Status/Log Area:",
             bg=self.bg_darker,
             fg=self.fg_color,
-            font=("Arial", 9, "bold"),
+            font=("Consolas", 9, "bold"),
             anchor="w",
             padx=5
         )
@@ -215,9 +237,19 @@ class ParakeetUI:
             self.log("Please Select Instance first!")
             return
 
-        url = "https://raw.githubusercontent.com/aeaver/parakeet/refs/heads/main/manifest.json"
-        headers = {'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) Parakeet/1.0'}
+        if not self.server_combo.get():
+            self.log("Please Select server first!")
+            return
+
+        if self.server_combo.get() == "aeaver":
+            url = "https://raw.githubusercontent.com/aeaver/parakeet/refs/heads/main/aeaver.json"
+        elif self.server_combo.get() == "krabu":
+            url = "https://raw.githubusercontent.com/aeaver/parakeet/refs/heads/main/krabu.json"
+        else:
+            return None
         
+        headers = {'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) Parakeet/1.0'}
+
         self.update_button.config(state=tk.DISABLED, text="Updating...")
 
         try:
@@ -234,13 +266,13 @@ class ParakeetUI:
 
                 self.log(f"Downloading mods...")
                 self.root.update()
-                
-                
+
+
                 ##get_download = session.get(file_download_url, stream=True)
                 with session.stream("GET",file_download_url) as get_download:
                     total_size = int(get_download.headers.get('content-length', 0))
                     downloaded = 0
-    
+
                     if get_download.status_code == 200:
                         with open(download_location, "wb") as f:
                             for chunk in get_download.iter_bytes(chunk_size=8192):
@@ -281,7 +313,7 @@ class ParakeetUI:
             self.log(f"Unexpected error: {e}")
 
         self.log("Update completed, Close the damn thing now")
-        
+
         self.update_button.config(text="Update",state=tk.NORMAL)
 
 
