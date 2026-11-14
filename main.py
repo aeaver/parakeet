@@ -21,7 +21,7 @@ class ParakeetUI:
         self.accent_color = "#4CAF50"
 
         self.server_mod = {"aeaver":"https://raw.githubusercontent.com/aeaver/parakeet/refs/heads/main/aeaver.json",
-                        "krabu":"https://raw.githubusercontent.com/aeaver/parakeet/refs/heads/main/krabu.json"}
+                            "krabu":"https://raw.githubusercontent.com/aeaver/parakeet/refs/heads/main/krabu.json"}
         self.launcher_path = list(self.find_path())
         self.launcher_names = [name for name, path in self.launcher_path]
 
@@ -69,8 +69,6 @@ class ParakeetUI:
             width=15
         )
         self.server_combo.grid(row=0,column=1,sticky="ew",padx=5,pady=5)
-
-        self.server_combo.bind("<<ComboboxSelected>>", self.on_select_launcher)
 
         # LAUNCHER SELECTOR
 
@@ -166,7 +164,8 @@ class ParakeetUI:
         homepath = Path.home()
         location = {
             "PrismLauncher": homepath / "AppData"/"Roaming"/"PrismLauncher"/"instances",
-            "CurseForge": homepath / "curseforge"/ "minecraft" / "Instances"
+            "CurseForge": homepath / "curseforge"/ "minecraft" / "Instances",
+            "Legacy Launcher": homepath / "AppData"/ "Roaming" / ".tlauncher"
         }
 
         for name,path in location.items():
@@ -179,16 +178,23 @@ class ParakeetUI:
         for name,path in self.launcher_path:
             if name == selected_launcher_name:
                 self.selected_launcher_path = (name,path)
+                print(self.selected_launcher_path)
                 break
         else:
             return
 
-        self.instance_path = list(self.find_instance(self.selected_launcher_path))
-
-
-        self.instance_map = {path.name : path for _,path in self.instance_path}
-        self.instance_name = list(self.instance_map.keys())
-        self.instance_combo['values'] = self.instance_name
+        if not self.selected_launcher_path[0] == "Legacy Launcher":
+            self.instance_path = list(self.find_instance(self.selected_launcher_path))
+            self.instance_map = {path.name : path for _,path in self.instance_path}
+            self.instance_name = list(self.instance_map.keys())
+            self.instance_combo['values'] = self.instance_name
+        elif self.selected_launcher_path[0] == "Legacy Launcher":
+            name,path = self.selected_launcher_path
+            self.instance_map = {name : path}
+            self.instance_name = list(self.instance_map.keys())
+            self.instance_combo['values'] = self.instance_name
+        else:
+            self.log("error")
 
     def find_instance(self,selected_launcher_path,):
 
@@ -201,6 +207,7 @@ class ParakeetUI:
     def find_mod(self,event):
 
         selected_name = self.instance_combo.get()
+        print(selected_name)
         if not selected_name:
             return None
 
@@ -212,16 +219,19 @@ class ParakeetUI:
             if paths.is_dir():
                 pass
 
-        dot_minecraft = paths / ".minecraft"
-
         if label == "PrismLauncher":
             dot_minecraft = paths / ".minecraft"
             if dot_minecraft.exists() and dot_minecraft.is_dir():
                 target_dir = dot_minecraft / "mods"
+                print('hello')
             else:
                 target_dir = path / "minecraft" / "mods"
         elif label =="CurseForge":
             target_dir = path / "mods"
+        elif label =="Legacy Launcher":
+            target_dir = path / "legacy" / "Minecraft" / "game" / "mods"
+            print(path)
+            print("this is targer dir : " ,target_dir)
         else:
             return None
 
@@ -247,7 +257,7 @@ class ParakeetUI:
             url = "https://raw.githubusercontent.com/aeaver/parakeet/refs/heads/main/krabu.json"
         else:
             return None
-        
+
         headers = {'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) Parakeet/1.0'}
 
         self.update_button.config(state=tk.DISABLED, text="Updating...")
